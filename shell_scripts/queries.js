@@ -5,88 +5,139 @@
  */
 db = connect('localhost/blogs');
 
-// 1. List all users
+// List all users
 
 results = db.users.find();
 
 results = db.users.find({});
 
-// 2. List the first name of all users
+// List the first name of all users
 
 results = db.users.find({}, {
-    firstName: true,
-    _id: false
+  firstName: true
 });
 
-// 3. Find the users whose last name is Doe
+results = db.users.find({}, {
+  firstName: true,
+  _id: false
+});
+
+// Find the users whose last name is Doe
 
 results = db.users.find({
+  lastName: 'Doe'
+});
+
+results = db.users.find({
+  lastName: {
+    $eq: 'Doe'
+  }
+});
+
+// Find the users whose first name is John and last name is Doe
+
+results = db.users.find({
+  $and: [{
+      firstName: 'John'
+    },
+    {
+      lastName: 'Doe'
+    }
+  ]
+});
+
+results = db.users.find({
+  firstName: 'John',
+  lastName: 'Doe'
+});
+
+// Find the users whose first name is John or last name is Doe
+
+results = db.users.find({
+  $or: [{
+    firstName: 'John'
+  }, {
     lastName: 'Doe'
+  }]
+});
+
+// Find the users whose first name is John or first name is Jane and last name is Doe
+
+results = db.users.find({
+  $or: [{
+    firstName: 'John'
+  }, {
+    $and: [{
+        firstName: 'Jane'
+      },
+      {
+        lastName: 'Doe'
+      }
+    ]
+  }]
 });
 
 results = db.users.find({
-    lastName: {
-        $eq: 'Doe'
-    }
-});
-
-// 4. Find the users whose first name is John and last name is Doe
-
-results = db.users.find({
-    firstName: 'John',
+  $or: [{
+    firstName: 'John'
+  }, {
+    firstName: 'Jane',
     lastName: 'Doe'
+  }]
 });
 
-// 5. Find the users whose first name is John or last name is Doe
 
-results = db.users.find({
-    $or: [{
-        firstName: 'John'
-    }, {
-        lastName: 'Doe'
-    }]
-});
-
-// 6. Find the users whose first name is John or first name is Jane and last name is Doe
-
-results = db.users.find({
-    $or: [{
-        firstName: 'John'
-    }, {
-        firstName: 'Jane',
-        lastName: 'Doe'
-    }]
-});
-
-// 7. Find the articles published in March 2017
+// Find the articles whose tags contain 'NoSQL'
 
 results = db.articles.find({
-    date: {
-        $gte: new Date(2017,2,0),
-        $lt: new Date(2017,3,0)
-    }
+  tags: 'NoSQL'
 });
-
-// 8. Find the articles whose tags contain 'NoSQL'
 
 results = db.articles.find({
-    tags: {
-        $all: ['NoSQL']
-    }
+  tags: {
+    $all: ['NoSQL']
+  }
 });
 
-// 9. Find the articles John Doe has commented on
+// Find the articles John Doe has commented on
 
 results = db.articles.find({
-    'comments.author.firstName': 'Jane',
-    'comments.author.lastName': 'Doe'
+  'comments.author.firstName': 'John',
+  'comments.author.lastName': 'Doe'
 });
 
-// helper function used for output
+// List the articles with their authors (i.e. not just author id)
+
+results = db.articles.aggregate({
+  $lookup: {
+    from: 'users',
+    localField: 'authorId',
+    foreignField: '_id',
+    as: 'author'
+  }
+});
+
+// List the article authors
+
+results = db.articles.aggregate([{
+  $lookup: {
+    from: 'users',
+    localField: 'authorId',
+    foreignField: '_id',
+    as: 'author'
+  }
+}, {
+  $project: {
+    author: true
+  }
+}]);
+
+/* helper function used for output */
+
 function printAll(cursor) {
-    while (cursor.hasNext()) {
-        printjson(cursor.next());
-    }
+  while (cursor.hasNext()) {
+    printjson(cursor.next());
+  }
 }
 
 printAll(results);
