@@ -3,7 +3,9 @@
  *     mongo queries.js
  * or inside Mongo shell: load('queries.js')
  */
-db = connect('localhost/blogs');
+db = connect('localhost:4042/cs5220stu31');
+
+db.auth("cs5220stu31", "abcd");
 
 // List all users
 
@@ -25,13 +27,13 @@ results = db.users.find({}, {
 // Find the users whose last name is Doe
 
 results = db.users.find({
-  lastName: 'Doe'
-});
-
-results = db.users.find({
   lastName: {
     $eq: 'Doe'
   }
+});
+
+results = db.users.find({
+  lastName: 'Doe'
 });
 
 // Find the users whose first name is John and last name is Doe
@@ -131,6 +133,10 @@ results = db.articles.aggregate([{
     author: true
   }
 }]);
+
+// Text search for "MongoDB" in articles
+
+results = db.articles.find({ $text: { $search: "mongodb" } });
 
 /* helper function used for output */
 

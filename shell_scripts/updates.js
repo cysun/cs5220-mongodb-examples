@@ -3,7 +3,9 @@
  *     mongo queries.js
  * or inside Mongo shell: load('updates.js')
  */
-db = connect('localhost/blogs');
+db = connect('localhost:4042/cs5220stu31');
+
+db.auth("cs5220stu31", "abcd");
 
 // Change John Doe's name to Tom Smith
 

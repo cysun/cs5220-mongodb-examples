@@ -3,9 +3,12 @@
  *     mongo test2.js
  * or inside Mongo shell: load('test2.js')
  */
-db = connect('localhost/test2');
+db = connect('localhost:4042/cs5220stu31');
 
-print('Connected to database: test2');
+db.auth("cs5220stu31", "abcd");
+
+print('Connected to database: cs5220stu31');
+
 
 // drop the users collection if it already exists
 db.users.drop();

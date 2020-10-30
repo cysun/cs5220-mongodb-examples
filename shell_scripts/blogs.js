@@ -3,7 +3,9 @@
  *     mongo blogs.js
  * or inside Mongo shell: load('blogs.js')
  */
-db = connect('localhost/blogs');
+db = connect('localhost:4042/cs5220stu31');
+
+db.auth("cs5220stu31", "abcd");
 
 db.articles.drop();
 db.users.drop();
@@ -14,6 +16,13 @@ db.users.createIndex({
   email: 1
 }, {
   unique: true
+});
+
+// create a text index on the title and content of articles
+
+db.articles.createIndex({
+  name: "text",
+  text: "text"
 });
 
 // insert two users and get the generated _id
